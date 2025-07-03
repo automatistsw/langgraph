@@ -1,5 +1,23 @@
 // Simple page actions - no bloat!
 
+/**
+ * Escapes special HTML characters to prevent XSS.
+ * @param {string} str - The string to escape.
+ * @returns {string} - The escaped string.
+ */
+function escapeHTML(str) {
+    return str.replace(/[&<>"']/g, function (char) {
+        switch (char) {
+            case '&': return '&amp;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '"': return '&quot;';
+            case "'": return '&#39;';
+            default: return char;
+        }
+    });
+}
+
 function copyPageText() {
     const content = document.querySelector('.md-content__inner') || document.querySelector('main');
     if (content && navigator.clipboard) {
@@ -27,9 +45,9 @@ function viewAsMarkdown() {
         if (newWindow) {
             newWindow.document.write(`
                 <html>
-                <head><title>Markdown - ${title}</title></head>
+                <head><title>Markdown - ${escapeHTML(title)}</title></head>
                 <body style="font-family: monospace; white-space: pre-wrap; padding: 20px;">
-                ${markdown}
+                ${escapeHTML(markdown)}
                 </body>
                 </html>
             `);
